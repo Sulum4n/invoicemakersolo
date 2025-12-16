@@ -1,121 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6723528221622072" crossorigin="anonymous"></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ücretsiz Fatura Oluşturucu. Saniyeler içinde profesyonel PDF faturalar oluşturun. Filigran yok, üyelik yok.">
-    <title>Ücretsiz Fatura Oluşturucu | InvoiceMakerSolo</title>
+    <title>Professional Invoice Maker | Free Online Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .invoice-box { box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        @media print {
-            .no-print { display: none !important; }
-            .invoice-box { box-shadow: none; border: none; }
+        
+        /* PDF Yazdırma Alanı - Tam A4 Sığdırma Ayarı */
+        #invoice-area {
+            width: 800px;
+            min-height: 1050px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
         }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none; }
+            #invoice-area { box-shadow: none; border: none; margin: 0; width: 100%; }
+        }
+
+        .input-minimal {
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            padding: 2px 4px;
+            width: 100%;
+        }
+        .input-minimal:hover { border-color: #e2e8f0; background: #f8fafc; }
+        .input-minimal:focus { border-color: #3b82f6; background: white; outline: none; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen py-10">
+<body class="bg-slate-50 min-h-screen pb-20">
 
-<div class="max-w-4xl mx-auto px-4">
-    <div class="flex justify-between items-center mb-8 no-print">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">InvoiceMakerSolo</h1>
-            <p class="text-gray-500 mt-2" data-lang-key="slogan"></p>
+    <nav class="bg-white border-b mb-8 no-print">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-slate-800">InvoiceMakerSolo</h1>
+            <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition shadow-lg shadow-blue-200">
+                Download PDF
+            </button>
         </div>
-        <button onclick="toggleLanguage()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">
-            <span data-lang-key="langToggle"></span>
-        </button>
-    </div>
+    </nav>
 
-    <div id="invoice-area" class="bg-white invoice-box rounded-xl p-10 mb-8 max-w-[800px] mx-auto">
-        <div class="flex justify-between items-start border-b pb-8 mb-8">
-            <div class="w-1/2">
-                <h2 class="text-4xl font-bold mb-4" data-lang-key="invoiceTitle"></h2>
-                <input placeholder="" data-lang-placeholder-key="companyName" class="w-full text-lg font-bold border-none focus:ring-0 p-0 mb-1">
-                <textarea data-lang-placeholder-key="companyAddress" class="w-full text-sm text-gray-500 border-none resize-none h-20 p-0"></textarea>
+    <div id="invoice-area" class="shadow-2xl border border-gray-200 rounded-sm">
+        
+        <div class="flex justify-between items-start mb-12">
+            <div>
+                <input type="text" class="text-4xl font-extrabold text-blue-600 mb-2 input-minimal" value="INVOICE">
+                <input type="text" class="text-gray-500 input-minimal" value="#INV-001">
             </div>
-            <div class="w-1/2 text-right">
-                <div class="mb-2">
-                    <span class="text-gray-400 text-xs" data-lang-key="invoiceNo"></span>
-                    <input value="#INV-001" class="text-right font-bold w-24 border-none">
-                </div>
-                <div>
-                    <span class="text-gray-400 text-xs" data-lang-key="date"></span>
-                    <input type="date" class="border-none">
-                </div>
+            <div class="text-right">
+                <input type="text" class="font-bold text-lg input-minimal text-right" placeholder="Your Company Name">
+                <textarea class="text-gray-500 input-minimal text-right resize-none" placeholder="Your Address&#10;City, Country"></textarea>
             </div>
         </div>
 
-        <div class="mb-8">
-            <h3 class="text-xs font-bold text-gray-400 mb-2" data-lang-key="billTo"></h3>
-            <input data-lang-placeholder-key="clientName" class="w-full text-lg font-bold border rounded-md p-2 bg-gray-50">
-            <textarea data-lang-placeholder-key="clientAddress" class="w-full text-sm text-gray-600 mt-2 border-none resize-none h-16"></textarea>
+        <div class="grid grid-cols-2 gap-12 mb-12">
+            <div>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Bill To:</h3>
+                <input type="text" class="font-semibold block mb-1 input-minimal" placeholder="Client Name">
+                <textarea class="text-gray-500 input-minimal resize-none" placeholder="Client Address"></textarea>
+            </div>
+            <div class="text-right">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Details:</h3>
+                <div class="flex justify-end gap-2 mb-1">
+                    <span class="text-gray-400">Date:</span>
+                    <input type="date" class="input-minimal w-32 text-right">
+                </div>
+                <div class="flex justify-end gap-2">
+                    <span class="text-gray-400">Due Date:</span>
+                    <input type="date" class="input-minimal w-32 text-right">
+                </div>
+            </div>
         </div>
 
         <table class="w-full mb-8">
             <thead>
-                <tr class="bg-gray-50 border-b">
-                    <th class="p-3 text-xs text-gray-500" data-lang-key="description"></th>
-                    <th class="p-3 text-xs text-gray-500 text-right" id="amount-header"></th>
+                <tr class="border-b-2 border-gray-100">
+                    <th class="text-left py-4 text-gray-400 uppercase text-xs font-bold px-2">Description</th>
+                    <th class="text-right py-4 text-gray-400 uppercase text-xs font-bold w-24">Qty</th>
+                    <th class="text-right py-4 text-gray-400 uppercase text-xs font-bold w-32">Price</th>
+                    <th class="text-right py-4 text-gray-400 uppercase text-xs font-bold w-32">Total</th>
                 </tr>
             </thead>
-            <tbody id="item-list">
-                <tr class="border-b">
-                    <td class="p-3"><input data-lang-placeholder-key="itemDesc" class="w-full bg-transparent"></td>
-                    <td class="p-3"><input type="number" name="price" min="0" step="0.01" class="w-full text-right" oninput="calculateTotal()"></td>
+            <tbody id="items-body">
+                <tr class="border-b border-gray-50">
+                    <td class="py-4 px-2"><input type="text" class="input-minimal" value="Service / Product Name"></td>
+                    <td class="py-4"><input type="number" class="input-minimal text-right qty" value="1" oninput="calculate()"></td>
+                    <td class="py-4"><input type="number" class="input-minimal text-right price" value="100.00" oninput="calculate()"></td>
+                    <td class="py-4 text-right font-semibold item-total">$100.00</td>
                 </tr>
             </tbody>
         </table>
 
+        <button onclick="addRow()" class="no-print text-blue-600 font-semibold text-sm hover:text-blue-800 mb-8">+ Add Line Item</button>
+
         <div class="flex justify-end">
-            <div class="w-1/2">
-                <div class="flex justify-between"><span data-lang-key="subtotal"></span><span id="subtotal"></span></div>
-                <div class="flex justify-between"><span id="tax-rate-display"><span data-lang-key="taxLabel"></span> (<input id="tax-rate-input" type="number" min="0" max="100" value="0" class="w-12 text-center" oninput="calculateTotal()">%)</span><span id="tax"></span></div>
-                <div class="flex justify-between border-t mt-2 pt-2"><span data-lang-key="total" class="font-bold"></span><span id="grandtotal" class="font-bold"></span></div>
+            <div class="w-64 space-y-3">
+                <div class="flex justify-between text-gray-500">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$100.00</span>
+                </div>
+                <div class="flex justify-between text-gray-500">
+                    <span>Tax (0%):</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="flex justify-between text-xl font-bold text-slate-800 border-t pt-3">
+                    <span>Total:</span>
+                    <span id="grand-total" class="text-blue-600">$100.00</span>
+                </div>
             </div>
         </div>
 
-        <div class="pt-8 mt-16 border-t text-center text-xs text-gray-400">
-            <p data-lang-key="thankYou"></p>
-            <p>Generated free by InvoiceMakerSolo</p>
+        <div class="mt-20 border-t pt-8">
+            <textarea class="text-gray-400 text-sm input-minimal w-full resize-none" placeholder="Terms & Conditions or Bank Details..."></textarea>
         </div>
     </div>
 
-    <div class="text-center no-print">
-        <button onclick="downloadPDF()" class="bg-black text-white py-4 px-12 rounded-full" data-lang-key="downloadButton"></button>
-        <p class="text-xs text-gray-400 mt-4" data-lang-key="privacyInfo"></p>
-    </div>
-</div>
+    <script>
+        function addRow() {
+            const tr = document.createElement('tr');
+            tr.className = "border-b border-gray-50";
+            tr.innerHTML = `
+                <td class="py-4 px-2"><input type="text" class="input-minimal" placeholder="Item description"></td>
+                <td class="py-4"><input type="number" class="input-minimal text-right qty" value="1" oninput="calculate()"></td>
+                <td class="py-4"><input type="number" class="input-minimal text-right price" value="0.00" oninput="calculate()"></td>
+                <td class="py-4 text-right font-semibold item-total">$0.00</td>
+            `;
+            document.getElementById('items-body').appendChild(tr);
+        }
 
-<script>
-const translations = {
-    en:{slogan:"100% Free. No Sign-up. No Watermark.",langToggle:"Türkçe Yap",invoiceTitle:"INVOICE",invoiceNo:"Invoice No:",date:"Date:",billTo:"Bill To:",description:"Description",subtotal:"Subtotal:",taxLabel:"VAT",total:"Total:",thankYou:"Thank you for your business!",downloadButton:"Download PDF",privacyInfo:"Secure & Private.",companyName:"Your Company Name",companyAddress:"Your Address",clientName:"Client Name",clientAddress:"Client Address",itemDesc:"Item Description"},
-    tr:{slogan:"%100 Ücretsiz. Üyelik Yok. Filigran Yok.",langToggle:"English Yap",invoiceTitle:"FATURA",invoiceNo:"Fatura No:",date:"Tarih:",billTo:"Fatura Edilen",description:"Açıklama",subtotal:"Ara Toplam:",taxLabel:"KDV",total:"Genel Toplam:",thankYou:"Teşekkür ederiz!",downloadButton:"PDF İndir",privacyInfo:"Tarayıcınızda işlenir.",companyName:"Şirket Adı",companyAddress:"Adres",clientName:"Müşteri Adı",clientAddress:"Müşteri Adresi",itemDesc:"Ürün Açıklaması"}
-};
-let currentLang='en';
+        function calculate() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#items-body tr');
+            rows.forEach(row => {
+                const qty = row.querySelector('.qty').value || 0;
+                const price = row.querySelector('.price').value || 0;
+                const total = qty * price;
+                row.querySelector('.item-total').innerText = '$' + total.toFixed(2);
+                subtotal += total;
+            });
+            document.getElementById('subtotal').innerText = '$' + subtotal.toFixed(2);
+            document.getElementById('grand-total').innerText = '$' + subtotal.toFixed(2);
+        }
 
-function updateUI(lang){
-    document.documentElement.lang=lang;
-    document.querySelectorAll('[data-lang-key]').forEach(e=>e.innerText=translations[lang][e.dataset.langKey]);
-    document.querySelectorAll('[data-lang-placeholder-key]').forEach(e=>e.placeholder=translations[lang][e.dataset.langPlaceholderKey]);
-    document.getElementById('amount-header').innerText=`${translations[lang].description} (${'tr'===lang?'₺':'$'})`;
-    currentLang=lang;calculateTotal();
-}
-function toggleLanguage(){updateUI(currentLang==='en'?'tr':'en');}
-function calculateTotal(){
-    let sum=0;document.getElementsByName('price').forEach(p=>sum+=parseFloat(p.value)||0);
-    let rate=Math.min(Math.max(parseFloat(document.getElementById('tax-rate-input').value)||0,0),100)/100;
-    let tax=sum*rate,total=sum+tax,s=currentLang==='tr'?'₺':'$';
-    subtotal.innerText=s+sum.toFixed(2);taxEl.innerText=s+tax.toFixed(2);grandtotal.innerText=s+total.toFixed(2);
-}
-function downloadPDF(){
-    const date=document.querySelector('input[type="date"]');if(date&&!date.value)date.value=new Date().toISOString().split('T')[0];
-    html2pdf().from(document.getElementById('invoice-area')).save(currentLang==='tr'?'fatura.pdf':'invoice.pdf');
-}
-document.addEventListener('DOMContentLoaded',()=>updateUI('en'));
-</script>
+        function downloadPDF() {
+            const element = document.getElementById('invoice-area');
+            const opt = {
+                margin: 0,
+                filename: 'invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 </html>
